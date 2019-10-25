@@ -1,0 +1,14 @@
+{
+	"purseInfo": {
+		"action": "safas",
+		"mdmId": "afs",
+		"amount": "",
+		"effectiveDate": "",
+		"expiryDate": "",
+		"skuCode": "",
+		"currency": "",
+		"storeId": "",
+		"terminalId": "",
+		"UPC": ""
+	}
+}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="              http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd              http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+    <bean class="org.apache.camel.component.jpa.JpaComponent" id="jpa" scope="singleton">
+        <!--          <property name="entityManagerFactory" ref="emf"/> 
+ -->
+        <!--         <property name="transactionManager" ref="jtra"/>
+ -->
+        <!--     <jpa:unit property="entityManagerFactory" unitname="test"/>  -->
+    </bean>
+    <!-- <bean class="org.springframework.orm.jpa.JpaTransactionManager"
+        id="jtra" scope="singleton">
+        <property name="entityManagerFactory" ref="emf"/>
+    </bean> -->
+    <!--     <reference id="entityManagerFactory" interface="javax.persistence.EntityManagerFactory"/>
+ -->
+        <!--   <bean class="org.apache.activemq.RedeliveryPolicy" id="redel" scope="singleton">
+        <property name="maximumRedeliveries" value="0"/>
+    </bean> -->
+    <!-- <bean
+        class="org.springframework.jms.connection.JmsTransactionManager"
+        id="trans" scope="singleton">
+        <property name="connectionFactory" ref="cfactory"/>
+    </bean>
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory"
+        id="cfactory" scope="singleton">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="userName" value="admin"/>
+        <property name="password" value="admin"/>
+        <property name="redeliveryPolicy" ref="redel"/>
+    </bean>
+    <bean class="org.apache.camel.component.jms.JmsConfiguration"
+        id="jmsconfig" scope="singleton">
+        <property name="connectionFactory" ref="cfactory"/>
+        <property name="transacted" value="true"/>
+    </bean>
+    <bean class="org.apache.camel.component.jms.JmsComponent" id="jms" scope="singleton">
+        <property name="configuration" ref="jmsconfig"/>
+    </bean> -->
+    <bean class="Newroute" id="jroute" scope="singleton"/>
+    <bean class="enrichment.Transform" id="enrichtran" scope="singleton"/>
+    <!-- <broker:broker brokerName="localhost" persistent="false" useJmx="false">
+        <broker:transportConnectors>
+            <broker:transportConnector name="tcp" uri="tcp://localhost:61616"/>
+        </broker:transportConnectors>
+    </broker:broker> -->
+    <camelContext id="cbr-example-context" xmlns="http://camel.apache.org/schema/blueprint">
+        <errorHandler id="test" type="NoErrorHandler" useOriginalMessage="true"/>
+        <routeBuilder ref="jroute"/>
+        <dataFormats>
+            <jaxb contentTypeHeader="false" contextPath="model"
+                id="xmlconv" partClass="model.Csvxmljpa" prettyPrint="true"/>
+            <bindy classType="model.Csvxmljpa" contentTypeHeader="false"
+                id="convcsv" type="Csv" unwrapSingleInstance="true"/>
+        </dataFormats>
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <redeliveryPolicy maximumRedeliveries="2"/>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <log message="exception ${exception.message}"/>
+            <!--             <rollback id="_rollback1" markRollbackOnly="true"/>
+ -->
+        </onException>
+        <route id="cbr-route">
+            <!--    <from id="_inOnly1from" uri="jms:input"/>  -->
+            <!--  <transacted id="_transacted1"/> -->
+            <!--             <transacted id="_transacted1"/>
+ -->
+            <from id="_from1" uri="file:work/cbr/input1"/>
+            <!-- <transacted id="_transacted1"/> -->
+            <log id="_log1" message="Receiving order ${file:name}"/>
+            <split id="_split1" stopOnException="true">
+                <xpath>/order/customer</xpath>
+                <choice id="_choice1">
+                    <when id="_when1">
+                        <xpath id="_xpath1">/customer/country = 'UK'</xpath>
+                        <log id="_log2" message="Sending order ${file:name} to the UK"/>
+                        <to id="_to5" uri="log:testmask?logMask=true&amp;multiline=true&amp;showExchangePattern=false&amp;skipBodyLineSeparator=false&amp;showBodyType=false"/>
+                        <unmarshal id="_unmarshal1" ref="xmlconv"/>
+                        <bean id="_bean1" method="covertcsvobject" ref="enrichtran"/>
+                        <marshal id="_marshal1" ref="convcsv"/>
+                        <to id="_to1" uri="file:work/cbr/output/uk"/>
+                    </when>
+                    <when id="_when2">
+                        <xpath id="_xpath2">/customer/country = 'US'</xpath>
+                        <log id="_log3" message="Sending order ${file:name} to the US"/>
+                        <unmarshal id="_unmarshal12" ref="xmlconv"/>
+                        <bean id="_bean12" method="covertcsvobject" ref="enrichtran"/>
+                        <marshal id="_marshal12" ref="convcsv"/>
+                        <to id="_to2" uri="file:work/cbr/output/us"/>
+                    </when>
+                    <otherwise id="_otherwise1">
+                        <!-- <throwException
+                            exceptionType="java.lang.Exception" id="_throwException1"/> -->
+                        <!-- <to id="_to4" uri="direct:test"/> -->
+                        <!--                         <rollback id="_rollback1" markRollbackOnly="true"/>
+ -->
+                        <log id="_log4" message="Sending order ${file:name} to another country"/>
+                        <unmarshal id="_unmarshal13" ref="xmlconv"/>
+                        <bean id="_bean13" method="covertcsvobject" ref="enrichtran"/>
+                        <inOnly id="_inOnly1" uri="jpa:model.Csvxmljpa?persistenceUnit=camel"/>
+                        <marshal id="_marshal13" ref="convcsv"/>
+                        <to id="_to3" uri="file:work/cbr/output/others"/>
+                        <log id="_log6" message="inserted"/>
+                        <!--                         <inOnly id="_inOnly1" uri="jms:test"/>
+ -->
+                        <!-- <throwException
+                            exceptionType="java.lang.Exception" id="_throwException1"/> -->
+                    </otherwise>
+                </choice>
+            </split>
+            <log id="_log5" message="Done processing ${file:name}"/>
+        </route>
+        <!--  <route id="_route1">
+            <from id="_from1h" uri="file:work/cbr/input"/>
+            <transacted id="_transacted1"/>
+            <convertBodyTo id="_convertBodyTo1" type="java.lang.String"/>
+            <inOnly id="_inOnly1" uri="jms:test"/>
+            <throwException exceptionType="java.lang.Exception" id="_throwException1"/>
+            <to id="_to5h" uri="log:testmask?logMask=true&amp;multiline=true&amp;showExchangePattern=false&amp;skipBodyLineSeparator=false&amp;showBodyType=false"/>
+        </route> -->
+    </camelContext>
+</blueprint>

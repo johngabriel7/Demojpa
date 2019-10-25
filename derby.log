@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Fri Oct 25 18:46:14 IST 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.1.0 - (1808820): instance a816c00e-016e-030f-6d10-000001b571c0 
+on database directory memory:D:\ipm\EXAM-PREP\order with class loader java.net.URLClassLoader@67c123 
+Loaded from file:/D:/repository/org/apache/derby/derby/10.14.1.0/derby-10.14.1.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0-b128
+user.dir=D:\ipm\EXAM-PREP
+os.name=Windows 7
+os.arch=x86
+os.version=6.1
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

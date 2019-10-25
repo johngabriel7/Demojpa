@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE xml>
+
+<order>
+
+    <customer id="A0001">
+        <name>Antwerp Zoo</name>
+        <city>Antwerp</city>
+        <country>BE</country>
+        <quantity>1</quantity>
+           <date>2012-03-01</date>
+           <description>Aardvark</description>
+           <password>test</password>
+    </customer>
+    
+    <customer id="A0002">
+        <name>Antwerp Zoo1</name>
+        <city>Antwerp</city>
+        <country>UK</country>
+        <quantity>1</quantity>
+           <date>2012-03-01</date>
+           <description>Aardvark</description>
+           <password>test</password>
+    </customer>
+
+</order>

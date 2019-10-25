@@ -1,0 +1,38 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1572009369923
+Build-Jdk: 1.8.0
+Built-By: 454115
+Bundle-Blueprint: OSGI-INF/blueprint/blueprint.xml
+Bundle-Description: Demo Example
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.html
+Bundle-ManifestVersion: 2
+Bundle-Name: Camel Content-Based Router Example [EXAM-PREP]
+Bundle-SymbolicName: DEMO-PREP
+Bundle-Version: 4.1.4
+Created-By: Apache Maven Bundle Plugin
+DynamicImport-Package: *, org.hibernate.proxy, javassist.util.proxy
+Export-Package: enrichment;uses:="org.apache.camel";version="4.1.4",mode
+ l;uses:="javax.persistence,javax.xml.bind.annotation,org.apache.camel.d
+ ataformat.bindy.annotation";version="4.1.4"
+Import-Package: javax.persistence;version="[2.1,3)",javax.xml.bind.annot
+ ation,model,org.apache.camel;version="[2.21,3)",org.apache.camel.builde
+ r;version="[2.21,3)",org.apache.camel.component.jpa;version="[2.21,3)",
+ org.apache.camel.dataformat.bindy.annotation;version="[2.21,3)",org.apa
+ che.camel.model;version="[2.21,3)",org.apache.camel.processor;version="
+ [2.21,3)",org.osgi.service.blueprint;version="[1.0.0,2.0.0)",org.spring
+ framework.orm.jpa
+Meta-Persistence: META-INF/persistence.xml
+Provide-Capability: osgi.service;effective:=active;objectClass="org.apac
+ he.aries.jpa.supplier.EmSupplier";osgi.unit.name=camel,osgi.service;eff
+ ective:=active;objectClass="org.apache.aries.jpa.template.JpaTemplate";
+ osgi.unit.name=camel,osgi.service;effective:=active;objectClass="javax.
+ persistence.EntityManagerFactory";osgi.unit.name=camel,osgi.service;eff
+ ective:=active;objectClass="javax.persistence.EntityManager";osgi.unit.
+ name=camel
+Require-Capability: osgi.service;effective:=active;objectClass="javax.pe
+ rsistence.spi.PersistenceProvider";javax.persistence.provider="org.hibe
+ rnate.ejb.HibernatePersistence",osgi.service;effective:=active;objectCl
+ ass="org.osgi.service.jdbc.DataSourceFactory";osgi.jdbc.driver.class="o
+ rg.apache.derby.jdbc.EmbeddedDriver",osgi.extender;osgi.extender="aries
+ .jpa",osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Tool: Bnd-3.2.0.201605172007
